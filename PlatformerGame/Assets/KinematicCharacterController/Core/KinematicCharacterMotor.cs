@@ -95,7 +95,6 @@ namespace KinematicCharacterController
     /// </summary>
     public struct CharacterTransientGroundingReport
     {
-        public bool OnWall;
         public bool FoundAnyGround;
         public bool IsStableOnGround;
         public bool SnappingPrevented;

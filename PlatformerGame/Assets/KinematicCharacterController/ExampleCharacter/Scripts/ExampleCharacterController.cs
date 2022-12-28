@@ -65,9 +65,12 @@ namespace KinematicCharacterController.Examples
 
         [Header("Wall Jumping")]
         public bool AllowWallJump = false;
-        public float WallJumpTime = 0f;
+        public float WallSlideDuration = 0f;
+        private float _wallSlideTimer = 0f;
+        public float WallJumpDuration = 0f;
         private float _wallJumpTimer = 0f;
         private Vector3 _lastWallNormal;
+        public float WallSlideDistance = 0f;
 
         [Header("Misc")]
         public List<Collider> IgnoredColliders = new List<Collider>();
@@ -166,6 +169,22 @@ namespace KinematicCharacterController.Examples
                     {
                         // Move and look inputs
                         _moveInputVector = (_wallJumpTimer > 0f) ? _lastWallNormal : cameraPlanarRotation * moveInputVector;
+
+                        // Calculate wall jump stuff
+                        Vector3 endPos = Motor.TransientPosition + (Motor.CharacterUp * (Motor.Capsule.height / 2f));
+                        Vector3 startPos = Motor.TransientPosition - (Motor.CharacterUp * (Motor.Capsule.height / 2f)); 
+                        RaycastHit wallHit = new RaycastHit();
+                        if (Physics.CapsuleCast(startPos, endPos, Motor.Capsule.radius * 0.25f, _moveInputVector, out wallHit, WallSlideDistance, Motor.CollidableLayers, QueryTriggerInteraction.Collide))
+                        {
+                            _wallSlideTimer = WallSlideDuration;
+                            _lastWallNormal = Vector3.ProjectOnPlane(wallHit.normal, Motor.CharacterUp).normalized;
+                        }
+                        else
+                        {
+                            _wallSlideTimer = 0f;
+                        }
+
+                        print(_wallSlideTimer);
 
                         switch (OrientationMethod)
                         {
@@ -362,25 +381,41 @@ namespace KinematicCharacterController.Examples
                         if (_jumpRequested)
                         {
                             // See if we actually are allowed to ground jump
-                            if (!_jumpConsumed && ((AllowJumpingWhenSliding ? Motor.GroundingStatus.FoundAnyGround : Motor.GroundingStatus.IsStableOnGround) || _timeSinceLastAbleToJump <= JumpPostGroundingGraceTime))
+                            if (!_jumpConsumed)
                             {
-                                // Calculate jump direction before ungrounding
                                 Vector3 jumpDirection = Motor.CharacterUp;
-                                if (Motor.GroundingStatus.FoundAnyGround && !Motor.GroundingStatus.IsStableOnGround)
+
+                                // Handle wall jump
+                                if (AllowWallJump && _wallSlideTimer > 0f) 
                                 {
-                                    jumpDirection = Motor.GroundingStatus.GroundNormal;
+                                    _wallSlideTimer = 0f;
+                                    _wallJumpTimer = WallJumpDuration;
+                                    jumpDirection = _lastWallNormal;
+                                    _jumpConsumed = true;
+                                }
+                                else if (_timeSinceLastAbleToJump <= JumpPostGroundingGraceTime && AllowJumpingWhenSliding ? Motor.GroundingStatus.FoundAnyGround : Motor.GroundingStatus.IsStableOnGround)
+                                {
+                                    _wallSlideTimer = 0f;
+                                    // Calculate jump direction before ungrounding
+                                    if (Motor.GroundingStatus.FoundAnyGround && !Motor.GroundingStatus.IsStableOnGround)
+                                    {
+                                        jumpDirection = Motor.GroundingStatus.GroundNormal;
+                                    }
+                                    _jumpConsumed = true;
                                 }
 
-                                // Makes the character skip ground probing/snapping on its next update. 
-                                // If this line weren't here, the character would remain snapped to the ground when trying to jump. Try commenting this line out and see.
-                                Motor.ForceUnground();
+                                if (_jumpConsumed)
+                                {
+                                    // Makes the character skip ground probing/snapping on its next update. 
+                                    // If this line weren't here, the character would remain snapped to the ground when trying to jump. Try commenting this line out and see.
+                                    Motor.ForceUnground();
 
-                                // Add to the return velocity and reset jump state
-                                currentVelocity += (jumpDirection * JumpUpSpeed) - Vector3.Project(currentVelocity, Motor.CharacterUp);
-                                currentVelocity += (_moveInputVector * JumpScalableForwardSpeed);
-                                _jumpRequested = false;
-                                _jumpConsumed = true;
-                                _jumpedThisFrame = true;
+                                    // Add to the return velocity and reset jump state
+                                    currentVelocity += (jumpDirection * JumpUpSpeed) - Vector3.Project(currentVelocity, Motor.CharacterUp);
+                                    currentVelocity += (_moveInputVector * JumpScalableForwardSpeed);
+                                    _jumpRequested = false;
+                                    _jumpedThisFrame = true;
+                                }
                             }
                         }
 
