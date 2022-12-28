@@ -15,6 +15,7 @@ namespace KinematicCharacterController.Examples
     {
         TowardsCamera,
         TowardsMovement,
+        TowardsMomentum,
     }
 
     public struct PlayerCharacterInputs
@@ -61,6 +62,12 @@ namespace KinematicCharacterController.Examples
         public float JumpScalableForwardSpeed = 10f;
         public float JumpPreGroundingGraceTime = 0f;
         public float JumpPostGroundingGraceTime = 0f;
+
+        [Header("Wall Jumping")]
+        public bool AllowWallJump = false;
+        public float WallJumpTime = 0f;
+        private float _wallJumpTimer = 0f;
+        private Vector3 _lastWallNormal;
 
         [Header("Misc")]
         public List<Collider> IgnoredColliders = new List<Collider>();
@@ -158,7 +165,7 @@ namespace KinematicCharacterController.Examples
                 case CharacterState.Default:
                     {
                         // Move and look inputs
-                        _moveInputVector = cameraPlanarRotation * moveInputVector;
+                        _moveInputVector = (_wallJumpTimer > 0f) ? _lastWallNormal : cameraPlanarRotation * moveInputVector;
 
                         switch (OrientationMethod)
                         {
@@ -354,7 +361,7 @@ namespace KinematicCharacterController.Examples
                         _timeSinceJumpRequested += deltaTime;
                         if (_jumpRequested)
                         {
-                            // See if we actually are allowed to jump
+                            // See if we actually are allowed to ground jump
                             if (!_jumpConsumed && ((AllowJumpingWhenSliding ? Motor.GroundingStatus.FoundAnyGround : Motor.GroundingStatus.IsStableOnGround) || _timeSinceLastAbleToJump <= JumpPostGroundingGraceTime))
                             {
                                 // Calculate jump direction before ungrounding
@@ -404,6 +411,11 @@ namespace KinematicCharacterController.Examples
                             if (_jumpRequested && _timeSinceJumpRequested > JumpPreGroundingGraceTime)
                             {
                                 _jumpRequested = false;
+                            }
+
+                            if (_wallJumpTimer > 0f)
+                            {
+                                _wallJumpTimer -= Time.deltaTime;
                             }
 
                             if (AllowJumpingWhenSliding ? Motor.GroundingStatus.FoundAnyGround : Motor.GroundingStatus.IsStableOnGround)
