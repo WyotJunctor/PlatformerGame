@@ -185,6 +185,9 @@ namespace KinematicCharacterController.Examples
                         }
 
                         print(_wallSlideTimer);
+                        Debug.DrawLine(startPos, endPos);
+                        Debug.DrawLine(Motor.TransientPosition, wallHit.point);
+                        Debug.DrawRay(wallHit.point, _lastWallNormal);
 
                         switch (OrientationMethod)
                         {
