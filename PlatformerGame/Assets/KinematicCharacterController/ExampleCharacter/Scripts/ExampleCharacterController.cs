@@ -193,7 +193,11 @@ namespace KinematicCharacterController.Examples
 
                         Vector3 endPos = Motor.TransientPosition + (Motor.CharacterUp * Motor.Capsule.height);
                         Vector3 startPos = Motor.TransientPosition;
-                        Vector3 castDir = transform.forward; // (_wallSliding) ? transform.forward : _moveInputVector;
+                        Vector3 castDir = (_moveInputVector.sqrMagnitude > 0f) ? _moveInputVector : Motor.BaseVelocity.normalized;
+                        if (_wallSliding)
+                        {
+                            castDir = transform.forward;
+                        }
                         RaycastHit wallHit = new RaycastHit();
                         if (_wallJumpTimer <= WallJumpCooldown &&
                             !(AllowJumpingWhenSliding ? Motor.GroundingStatus.FoundAnyGround : Motor.GroundingStatus.IsStableOnGround) &&
