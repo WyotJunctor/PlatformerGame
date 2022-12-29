@@ -217,7 +217,7 @@ namespace KinematicCharacterController.Examples
                             _wallSlideTimer = 0f;
                         }
 
-                        _pointDir = _lastWallNormal;
+                        _pointDir = moveInputVector;
 
                         if (_wallSlideTimer > 0f == true && moveInputVector.sqrMagnitude > 0f && Vector3.Angle(moveInputVector, -_lastWallNormal) > 90f)
                         {
@@ -453,7 +453,17 @@ namespace KinematicCharacterController.Examples
                                 else if (AllowWallJump && _wallSlideTimer > 0f && _wallJumpTimer <= WallJumpCooldown) 
                                 {
                                     _wallJumpTimer = WallJumpDuration;
-                                    jumpDirection = (_pointDir + _lastWallNormal) / 2f;
+
+                                    _pointDir = Vector3.ProjectOnPlane(_pointDir, _lastWallNormal);
+                                    if (_pointDir.sqrMagnitude > 0f)
+                                    {
+                                        jumpDirection = (_pointDir + _lastWallNormal) / 2f;
+                                    }
+                                    else
+                                    {
+                                        jumpDirection = _lastWallNormal;
+                                    }
+                                    jumpDirection = jumpDirection.normalized;
                                     _currentWallNormal = jumpDirection;
                                     jumpDirection.y += UpwardsMovement;
                                     _jumpConsumed = true;

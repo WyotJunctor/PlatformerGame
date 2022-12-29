@@ -167,7 +167,7 @@ MonoBehaviour:
   m_MinSize: {x: 300, y: 100}
   m_MaxSize: {x: 24288, y: 8096}
   vertical: 0
-  controlID: 38534
+  controlID: 43112
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -663,8 +663,8 @@ MonoBehaviour:
     y: 0
     width: 469
     height: 353.5
-  m_MinSize: {x: 100, y: 100}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 102, y: 121}
+  m_MaxSize: {x: 4002, y: 4021}
   m_ActualView: {fileID: 11}
   m_Panes:
   - {fileID: 11}
@@ -804,8 +804,8 @@ MonoBehaviour:
     y: 0
     width: 627
     height: 226.5
-  m_MinSize: {x: 102, y: 121}
-  m_MaxSize: {x: 4002, y: 4021}
+  m_MinSize: {x: 100, y: 100}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 16}
   m_Panes:
   - {fileID: 15}
@@ -869,7 +869,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 278.5}
     m_SelectedIDs: 044b0800
     m_LastClickedID: 543492
-    m_ExpandedIDs: 00000000fc6f0000067000000a700000347000003c7000003e700000be340800864a080000ca9a3bffffff7f
+    m_ExpandedIDs: 00000000067000000a700000347000003c7000003e700000be340800864a080000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -897,7 +897,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000067000000a700000347000003c700000be34080000ca9a3bffffff7f
+    m_ExpandedIDs: 00000000067000000a700000347000003c7000003e700000be340800864a080000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -928,18 +928,18 @@ MonoBehaviour:
     m_ExpandedInstanceIDs: c6230000f4310800f8310800
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: CharacterAnimationHandler
-      m_OriginalName: CharacterAnimationHandler
+      m_Name: 
+      m_OriginalName: 
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 543344
+      m_UserData: 0
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 0
+      m_OriginalEventType: 11
       m_IsRenamingFilename: 1
       m_ClientGUIView: {fileID: 14}
     m_CreateAssetUtility:
