@@ -43714,12 +43714,12 @@ MonoBehaviour:
   JumpPreGroundingGraceTime: 0.1
   JumpPostGroundingGraceTime: 0.2
   AllowWallJump: 1
-  WallSlideDuration: 0.5
+  WallSlideDuration: 1
   WallJumpDuration: 1
   WallJumpCooldown: 0.75
   WallSlideDistance: 0.6
   UpwardsMovement: 1
-  WallSlideDrag_mod: 0
+  WallSlideDrag_mod: 10
   IgnoredColliders:
   - {fileID: 1569120874}
   - {fileID: 2059747218}

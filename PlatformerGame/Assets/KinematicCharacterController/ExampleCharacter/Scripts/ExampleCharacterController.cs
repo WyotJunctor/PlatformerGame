@@ -66,6 +66,7 @@ namespace KinematicCharacterController.Examples
         [Header("Wall Jumping")]
         public bool AllowWallJump = false;
         public float WallSlideDuration = 0f;
+        private bool _wallSliding = false;
         private float _wallSlideTimer = 0f;
         public float WallJumpDuration = 0f;
         public float WallJumpCooldown = 0f;
@@ -74,7 +75,6 @@ namespace KinematicCharacterController.Examples
         public float WallSlideDistance = 0f;
         public float UpwardsMovement = 0f;
         public float WallSlideDrag_mod;
-        private float _originalDrag;
 
         [Header("Misc")]
         public List<Collider> IgnoredColliders = new List<Collider>();
@@ -174,17 +174,23 @@ namespace KinematicCharacterController.Examples
 
                         Vector3 endPos = Motor.TransientPosition + (Motor.CharacterUp * Motor.Capsule.height);
                         Vector3 startPos = Motor.TransientPosition;
+                        Vector3 castDir = (_wallSliding) ? transform.forward : _moveInputVector;
                         RaycastHit wallHit = new RaycastHit();
                         // Calculate wall jump stuff
                         //if (_wallJumpTimer <= 0)
                         //{
-                            if (Physics.CapsuleCast(startPos, endPos, Motor.Capsule.radius * 0.25f, _moveInputVector, out wallHit, WallSlideDistance, Motor.CollidableLayers, QueryTriggerInteraction.Collide))
+                            if (Physics.CapsuleCast(startPos, endPos, Motor.Capsule.radius * 0.25f, castDir, out wallHit, WallSlideDistance, Motor.CollidableLayers, QueryTriggerInteraction.Collide))
                             {
+                            if (!_wallSliding)
+                            {
+                                _wallSliding = true;
                                 _wallSlideTimer = WallSlideDuration;
+                            }
                                 _lastWallNormal = Vector3.ProjectOnPlane(wallHit.normal, Motor.CharacterUp).normalized;
                             }
                             else
                             {
+                                _wallSliding = false;
                                 _wallSlideTimer = 0f;
                             }
                         //}
@@ -385,7 +391,8 @@ namespace KinematicCharacterController.Examples
                             currentVelocity += Gravity * deltaTime;
 
                             // Drag
-                            currentVelocity *= (1f / (1f + (Drag * deltaTime)));
+                            float wallMod = WallSlideDrag_mod * (Mathf.Clamp(_wallSlideTimer, 0, WallSlideDuration) / WallSlideDuration);
+                            currentVelocity *= (1f / (1f + ((Drag + wallMod) * deltaTime)));
                         }
 
                         // Handle jumping
@@ -465,6 +472,11 @@ namespace KinematicCharacterController.Examples
                             if (_wallJumpTimer > 0f)
                             {
                                 _wallJumpTimer -= Time.deltaTime;
+                            }
+
+                            if (_wallSlideTimer > 0f)
+                            {
+                                _wallSlideTimer -= Time.deltaTime;
                             }
 
 
