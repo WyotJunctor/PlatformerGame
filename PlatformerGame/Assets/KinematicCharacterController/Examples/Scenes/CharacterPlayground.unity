@@ -36607,7 +36607,7 @@ MonoBehaviour:
   Director: {fileID: 1852388622}
 --- !u!95 &1852388624
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -36624,7 +36624,7 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
 --- !u!114 &1852388625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -43626,8 +43626,8 @@ MonoBehaviour:
   JumpPostGroundingGraceTime: 0.2
   AllowWallJump: 1
   WallSlideDuration: 1
-  WallJumpDuration: 1
-  WallJumpCooldown: 0.75
+  WallJumpDuration: 0.25
+  WallJumpCooldown: 0.1
   WallSlideDistance: 0.6
   UpwardsMovement: 1
   WallSlideDrag_mod: 10

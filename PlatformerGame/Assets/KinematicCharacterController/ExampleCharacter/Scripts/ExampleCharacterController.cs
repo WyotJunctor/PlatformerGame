@@ -67,6 +67,7 @@ namespace KinematicCharacterController.Examples
         public bool AllowWallJump = false;
         public float WallSlideDuration = 0f;
         private bool _wallSliding = false;
+        public bool WallSlideFade = false;
         private float _wallSlideTimer = 0f;
         public float WallJumpDuration = 0f;
         public float WallJumpCooldown = 0f;
@@ -474,7 +475,7 @@ namespace KinematicCharacterController.Examples
                                 _wallJumpTimer -= Time.deltaTime;
                             }
 
-                            if (_wallSlideTimer > 0f)
+                            if (_wallSlideTimer > 0f && WallSlideFade)
                             {
                                 _wallSlideTimer -= Time.deltaTime;
                             }
