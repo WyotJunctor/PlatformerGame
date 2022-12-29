@@ -72,9 +72,12 @@ namespace KinematicCharacterController.Examples
         public float WallJumpDuration = 0f;
         public float WallJumpCooldown = 0f;
         private float _wallJumpTimer = 0f;
-        private Vector3 _lastWallNormal, _currentWallNormal;
+        private Vector3 _lastWallNormal, _currentWallNormal, _pointDir;
         public float WallSlideDistance = 0f;
         public float UpwardsMovement = 0f;
+        public float WallSlideStickyTime = 0f;
+        private float _wallSlideUnstickTimer = 0f;
+        private bool _initUnstick = false;
         public float WallSlideDrag_mod;
 
         [Header("Misc")]
@@ -173,38 +176,65 @@ namespace KinematicCharacterController.Examples
                 case CharacterState.Default:
                     {
 
-                        Vector3 endPos = Motor.TransientPosition + (Motor.CharacterUp * Motor.Capsule.height);
-                        Vector3 startPos = Motor.TransientPosition;
-                        Vector3 castDir = (_wallSliding) ? transform.forward : _moveInputVector;
-                        RaycastHit wallHit = new RaycastHit();
-                        // Calculate wall jump stuff
-                        //if (_wallJumpTimer <= 0)
-                        //{
-                            if (Physics.CapsuleCast(startPos, endPos, Motor.Capsule.radius * 0.25f, castDir, out wallHit, WallSlideDistance, Motor.CollidableLayers, QueryTriggerInteraction.Collide))
-                            {
-                            if (!_wallSliding)
-                            {
-                                _wallSliding = true;
-                                _wallSlideTimer = WallSlideDuration;
-                            }
-                                _lastWallNormal = Vector3.ProjectOnPlane(wallHit.normal, Motor.CharacterUp).normalized;
-                            }
-                            else
-                            {
-                                _wallSliding = false;
-                                _wallSlideTimer = 0f;
-                            }
-                        //}
-                        
+                        moveInputVector = (cameraPlanarRotation * moveInputVector).normalized;
                         // Move and look inputs
-                        if (_wallJumpTimer > 0f) 
+                        if (_wallJumpTimer > 0f)
                         {
                             _moveInputVector = _currentWallNormal * (Mathf.Clamp(_wallJumpTimer, 0, WallJumpDuration) / WallJumpDuration);
                         }
+                        else if (_wallSlideTimer > 0f)
+                        {
+                            _moveInputVector = -_lastWallNormal;
+                        }
                         else
                         {
-                            _moveInputVector = (cameraPlanarRotation * moveInputVector).normalized;
+                            _moveInputVector = moveInputVector;
                         }
+
+                        Vector3 endPos = Motor.TransientPosition + (Motor.CharacterUp * Motor.Capsule.height);
+                        Vector3 startPos = Motor.TransientPosition;
+                        Vector3 castDir = transform.forward; // (_wallSliding) ? transform.forward : _moveInputVector;
+                        RaycastHit wallHit = new RaycastHit();
+                        if (_wallJumpTimer <= WallJumpCooldown &&
+                            !(AllowJumpingWhenSliding ? Motor.GroundingStatus.FoundAnyGround : Motor.GroundingStatus.IsStableOnGround) &&
+                            Physics.CapsuleCast(startPos, endPos, Motor.Capsule.radius * 0.25f, castDir, out wallHit, WallSlideDistance, Motor.CollidableLayers, QueryTriggerInteraction.Collide))
+                        {
+                        if (!_wallSliding)
+                        {
+                            _wallSliding = true;
+                            _wallSlideTimer = WallSlideDuration;
+                            _wallSlideUnstickTimer = 0f;
+                        }
+                            _lastWallNormal = Vector3.ProjectOnPlane(wallHit.normal, Motor.CharacterUp).normalized;
+                        }
+                        else
+                        {
+                            _wallSliding = false;
+                            _wallSlideTimer = 0f;
+                        }
+
+                        _pointDir = _lastWallNormal;
+
+                        if (_wallSlideTimer > 0f == true && moveInputVector.sqrMagnitude > 0f && Vector3.Angle(moveInputVector, -_lastWallNormal) > 90f)
+                        {
+                            _pointDir = moveInputVector;
+                            _initUnstick = true;
+                            _wallSlideUnstickTimer += Time.deltaTime;
+                            if (_wallSlideUnstickTimer >= WallSlideStickyTime)
+                            {
+                                _wallSlideTimer = 0f;
+                                _wallSliding = false;
+                                _wallSlideUnstickTimer = 0f;
+                            }
+                        }
+                        else if (_initUnstick)
+                        {
+                            _initUnstick = false;
+                            _wallSliding = false;
+                            _wallSlideTimer = 0f;
+                            _wallSlideUnstickTimer = 0f;
+                        }
+
 
                         switch (OrientationMethod)
                         {
@@ -419,8 +449,8 @@ namespace KinematicCharacterController.Examples
                                 else if (AllowWallJump && _wallSlideTimer > 0f && _wallJumpTimer <= WallJumpCooldown) 
                                 {
                                     _wallJumpTimer = WallJumpDuration;
-                                    jumpDirection = _lastWallNormal;
-                                    _currentWallNormal = _lastWallNormal;
+                                    jumpDirection = (_pointDir + _lastWallNormal) / 2f;
+                                    _currentWallNormal = jumpDirection;
                                     jumpDirection.y += UpwardsMovement;
                                     _jumpConsumed = true;
                                 }

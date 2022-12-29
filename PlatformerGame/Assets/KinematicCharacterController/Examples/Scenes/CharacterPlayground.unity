@@ -4154,10 +4154,12 @@ MonoBehaviour:
   JumpPostGroundingGraceTime: 0
   AllowWallJump: 1
   WallSlideDuration: 0
+  WallSlideFade: 0
   WallJumpDuration: 0
   WallJumpCooldown: 0
   WallSlideDistance: 0
   UpwardsMovement: 0
+  WallSlideStickyTime: 0
   WallSlideDrag_mod: 0
   IgnoredColliders: []
   BonusOrientationMethod: 0
@@ -16907,10 +16909,12 @@ MonoBehaviour:
   JumpPostGroundingGraceTime: 0
   AllowWallJump: 1
   WallSlideDuration: 0
+  WallSlideFade: 0
   WallJumpDuration: 0
   WallJumpCooldown: 0
   WallSlideDistance: 0
   UpwardsMovement: 0
+  WallSlideStickyTime: 0
   WallSlideDrag_mod: 0
   IgnoredColliders: []
   BonusOrientationMethod: 0
@@ -42879,10 +42883,12 @@ MonoBehaviour:
   JumpPostGroundingGraceTime: 0
   AllowWallJump: 1
   WallSlideDuration: 0
+  WallSlideFade: 0
   WallJumpDuration: 0
   WallJumpCooldown: 0
   WallSlideDistance: 0
   UpwardsMovement: 0
+  WallSlideStickyTime: 0
   WallSlideDrag_mod: 0
   IgnoredColliders: []
   BonusOrientationMethod: 0
@@ -43626,10 +43632,12 @@ MonoBehaviour:
   JumpPostGroundingGraceTime: 0.2
   AllowWallJump: 1
   WallSlideDuration: 1
+  WallSlideFade: 0
   WallJumpDuration: 0.25
   WallJumpCooldown: 0.1
-  WallSlideDistance: 0.6
+  WallSlideDistance: 1
   UpwardsMovement: 1
+  WallSlideStickyTime: 0.75
   WallSlideDrag_mod: 10
   IgnoredColliders:
   - {fileID: 1569120874}
