@@ -4158,6 +4158,7 @@ MonoBehaviour:
   WallJumpCooldown: 0
   WallSlideDistance: 0
   UpwardsMovement: 0
+  WallSlideDrag_mod: 0
   IgnoredColliders: []
   BonusOrientationMethod: 0
   BonusOrientationSharpness: 10
@@ -16910,6 +16911,7 @@ MonoBehaviour:
   WallJumpCooldown: 0
   WallSlideDistance: 0
   UpwardsMovement: 0
+  WallSlideDrag_mod: 0
   IgnoredColliders: []
   BonusOrientationMethod: 0
   BonusOrientationSharpness: 10
@@ -42803,6 +42805,7 @@ MonoBehaviour:
   WallJumpCooldown: 0
   WallSlideDistance: 0
   UpwardsMovement: 0
+  WallSlideDrag_mod: 0
   IgnoredColliders: []
   BonusOrientationMethod: 0
   BonusOrientationSharpness: 10
@@ -43713,9 +43716,10 @@ MonoBehaviour:
   AllowWallJump: 1
   WallSlideDuration: 0.5
   WallJumpDuration: 1
-  WallJumpCooldown: 0.25
+  WallJumpCooldown: 0.75
   WallSlideDistance: 0.6
   UpwardsMovement: 1
+  WallSlideDrag_mod: 0
   IgnoredColliders:
   - {fileID: 1569120874}
   - {fileID: 2059747218}
