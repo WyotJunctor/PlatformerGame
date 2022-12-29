@@ -79,6 +79,7 @@ namespace KinematicCharacterController.Examples
         private float _wallSlideUnstickTimer = 0f;
         private bool _initUnstick = false;
         public float WallSlideMovementThreshold = 0f;
+        public float WallSlideCheckRadius = 1f;
         public float WallSlideDrag_mod;
         public Transform BottomWallSlidePivot;
         public Transform TopWallSlidePivot;
@@ -203,7 +204,7 @@ namespace KinematicCharacterController.Examples
                         RaycastHit wallHit = new RaycastHit();
                         if (_wallJumpTimer <= WallJumpCooldown && (_wallJumpTimer > 0f || originalMoveInputVector.sqrMagnitude > 0f || motorVelocity.sqrMagnitude > 0f) &&
                             !(AllowJumpingWhenSliding ? Motor.GroundingStatus.FoundAnyGround : Motor.GroundingStatus.IsStableOnGround) &&
-                            Physics.CapsuleCast(BottomWallSlidePivot.position, TopWallSlidePivot.position, Motor.Capsule.radius * 0.25f, castDir, out wallHit, WallSlideDistance, Motor.CollidableLayers, QueryTriggerInteraction.Collide))
+                            Physics.CapsuleCast(BottomWallSlidePivot.position, TopWallSlidePivot.position, Motor.Capsule.radius * WallSlideCheckRadius, castDir, out wallHit, WallSlideDistance, Motor.CollidableLayers, QueryTriggerInteraction.Collide))
                         {
                         if (!_wallSliding)
                         {
