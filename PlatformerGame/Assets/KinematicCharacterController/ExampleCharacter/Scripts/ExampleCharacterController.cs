@@ -78,7 +78,10 @@ namespace KinematicCharacterController.Examples
         public float WallSlideStickyTime = 0f;
         private float _wallSlideUnstickTimer = 0f;
         private bool _initUnstick = false;
+        public float WallSlideMovementThreshold = 0f;
         public float WallSlideDrag_mod;
+        public Transform BottomWallSlidePivot;
+        public Transform TopWallSlidePivot;
 
         [Header("Misc")]
         public List<Collider> IgnoredColliders = new List<Collider>();
@@ -162,6 +165,7 @@ namespace KinematicCharacterController.Examples
         {
             // Clamp input
             Vector3 moveInputVector = Vector3.ClampMagnitude(new Vector3(inputs.MoveAxisRight, 0f, inputs.MoveAxisForward), 1f);
+            Vector3 originalMoveInputVector = moveInputVector;
 
             // Calculate camera direction and rotation on the character plane
             Vector3 cameraPlanarDirection = Vector3.ProjectOnPlane(inputs.CameraRotation * Vector3.forward, Motor.CharacterUp).normalized;
@@ -190,18 +194,16 @@ namespace KinematicCharacterController.Examples
                         {
                             _moveInputVector = moveInputVector;
                         }
-
-                        Vector3 endPos = Motor.TransientPosition + (Motor.CharacterUp * Motor.Capsule.height);
-                        Vector3 startPos = Motor.TransientPosition;
-                        Vector3 castDir = (_moveInputVector.sqrMagnitude > 0f) ? _moveInputVector : Motor.BaseVelocity.normalized;
+                        Vector3 motorVelocity = Vector3.ProjectOnPlane(Motor.BaseVelocity, Motor.CharacterUp);
+                        Vector3 castDir = (_moveInputVector.sqrMagnitude > 0f) ? _moveInputVector : motorVelocity.normalized;
                         if (_wallSliding)
                         {
                             castDir = transform.forward;
                         }
                         RaycastHit wallHit = new RaycastHit();
-                        if (_wallJumpTimer <= WallJumpCooldown &&
+                        if (_wallJumpTimer <= WallJumpCooldown && (_wallJumpTimer > 0f || originalMoveInputVector.sqrMagnitude > 0f || motorVelocity.sqrMagnitude > 0f) &&
                             !(AllowJumpingWhenSliding ? Motor.GroundingStatus.FoundAnyGround : Motor.GroundingStatus.IsStableOnGround) &&
-                            Physics.CapsuleCast(startPos, endPos, Motor.Capsule.radius * 0.25f, castDir, out wallHit, WallSlideDistance, Motor.CollidableLayers, QueryTriggerInteraction.Collide))
+                            Physics.CapsuleCast(BottomWallSlidePivot.position, TopWallSlidePivot.position, Motor.Capsule.radius * 0.25f, castDir, out wallHit, WallSlideDistance, Motor.CollidableLayers, QueryTriggerInteraction.Collide))
                         {
                         if (!_wallSliding)
                         {
