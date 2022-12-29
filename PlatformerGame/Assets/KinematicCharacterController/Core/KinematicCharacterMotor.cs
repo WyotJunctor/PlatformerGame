@@ -1029,6 +1029,8 @@ namespace KinematicCharacterController
         /// </summary>
         public void UpdatePhase2(float deltaTime)
         {
+
+
             // Handle rotation
             CharacterController.UpdateRotation(ref _transientRotation, deltaTime);
             TransientRotation = _transientRotation;

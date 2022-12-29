@@ -68,9 +68,13 @@ namespace KinematicCharacterController.Examples
         public float WallSlideDuration = 0f;
         private float _wallSlideTimer = 0f;
         public float WallJumpDuration = 0f;
+        public float WallJumpCooldown = 0f;
         private float _wallJumpTimer = 0f;
-        private Vector3 _lastWallNormal;
+        private Vector3 _lastWallNormal, _currentWallNormal;
         public float WallSlideDistance = 0f;
+        public float UpwardsMovement = 0f;
+        public float WallSlideDrag_mod;
+        private float _originalDrag;
 
         [Header("Misc")]
         public List<Collider> IgnoredColliders = new List<Collider>();
@@ -167,27 +171,33 @@ namespace KinematicCharacterController.Examples
             {
                 case CharacterState.Default:
                     {
-                        // Move and look inputs
-                        _moveInputVector = (_wallJumpTimer > 0f) ? _lastWallNormal : cameraPlanarRotation * moveInputVector;
 
-                        // Calculate wall jump stuff
-                        Vector3 endPos = Motor.TransientPosition + (Motor.CharacterUp * (Motor.Capsule.height / 2f));
-                        Vector3 startPos = Motor.TransientPosition - (Motor.CharacterUp * (Motor.Capsule.height / 2f)); 
+                        Vector3 endPos = Motor.TransientPosition + (Motor.CharacterUp * Motor.Capsule.height);
+                        Vector3 startPos = Motor.TransientPosition;
                         RaycastHit wallHit = new RaycastHit();
-                        if (Physics.CapsuleCast(startPos, endPos, Motor.Capsule.radius * 0.25f, _moveInputVector, out wallHit, WallSlideDistance, Motor.CollidableLayers, QueryTriggerInteraction.Collide))
+                        // Calculate wall jump stuff
+                        //if (_wallJumpTimer <= 0)
+                        //{
+                            if (Physics.CapsuleCast(startPos, endPos, Motor.Capsule.radius * 0.25f, _moveInputVector, out wallHit, WallSlideDistance, Motor.CollidableLayers, QueryTriggerInteraction.Collide))
+                            {
+                                _wallSlideTimer = WallSlideDuration;
+                                _lastWallNormal = Vector3.ProjectOnPlane(wallHit.normal, Motor.CharacterUp).normalized;
+                            }
+                            else
+                            {
+                                _wallSlideTimer = 0f;
+                            }
+                        //}
+                        
+                        // Move and look inputs
+                        if (_wallJumpTimer > 0f) 
                         {
-                            _wallSlideTimer = WallSlideDuration;
-                            _lastWallNormal = Vector3.ProjectOnPlane(wallHit.normal, Motor.CharacterUp).normalized;
+                            _moveInputVector = _currentWallNormal * (Mathf.Clamp(_wallJumpTimer, 0, WallJumpDuration) / WallJumpDuration);
                         }
                         else
                         {
-                            _wallSlideTimer = 0f;
+                            _moveInputVector = (cameraPlanarRotation * moveInputVector).normalized;
                         }
-
-                        print(_wallSlideTimer);
-                        Debug.DrawLine(startPos, endPos);
-                        Debug.DrawLine(Motor.TransientPosition, wallHit.point);
-                        Debug.DrawRay(wallHit.point, _lastWallNormal);
 
                         switch (OrientationMethod)
                         {
@@ -195,7 +205,7 @@ namespace KinematicCharacterController.Examples
                                 _lookInputVector = cameraPlanarDirection;
                                 break;
                             case OrientationMethod.TowardsMovement:
-                                _lookInputVector = _moveInputVector.normalized;
+                                _lookInputVector = _moveInputVector; //.normalized;
                                 break;
                         }
 
@@ -389,16 +399,8 @@ namespace KinematicCharacterController.Examples
                                 Vector3 jumpDirection = Motor.CharacterUp;
 
                                 // Handle wall jump
-                                if (AllowWallJump && _wallSlideTimer > 0f) 
+                                if (_timeSinceLastAbleToJump <= JumpPostGroundingGraceTime && AllowJumpingWhenSliding ? Motor.GroundingStatus.FoundAnyGround : Motor.GroundingStatus.IsStableOnGround)
                                 {
-                                    _wallSlideTimer = 0f;
-                                    _wallJumpTimer = WallJumpDuration;
-                                    jumpDirection = _lastWallNormal;
-                                    _jumpConsumed = true;
-                                }
-                                else if (_timeSinceLastAbleToJump <= JumpPostGroundingGraceTime && AllowJumpingWhenSliding ? Motor.GroundingStatus.FoundAnyGround : Motor.GroundingStatus.IsStableOnGround)
-                                {
-                                    _wallSlideTimer = 0f;
                                     // Calculate jump direction before ungrounding
                                     if (Motor.GroundingStatus.FoundAnyGround && !Motor.GroundingStatus.IsStableOnGround)
                                     {
@@ -406,9 +408,18 @@ namespace KinematicCharacterController.Examples
                                     }
                                     _jumpConsumed = true;
                                 }
+                                else if (AllowWallJump && _wallSlideTimer > 0f && _wallJumpTimer <= WallJumpCooldown) 
+                                {
+                                    _wallJumpTimer = WallJumpDuration;
+                                    jumpDirection = _lastWallNormal;
+                                    _currentWallNormal = _lastWallNormal;
+                                    jumpDirection.y += UpwardsMovement;
+                                    _jumpConsumed = true;
+                                }
 
                                 if (_jumpConsumed)
                                 {
+                                    _wallSlideTimer = 0f;
                                     // Makes the character skip ground probing/snapping on its next update. 
                                     // If this line weren't here, the character would remain snapped to the ground when trying to jump. Try commenting this line out and see.
                                     Motor.ForceUnground();
@@ -456,14 +467,18 @@ namespace KinematicCharacterController.Examples
                                 _wallJumpTimer -= Time.deltaTime;
                             }
 
+
+                            // If we're on a ground surface, reset jumping values
+                            if (!_jumpedThisFrame)
+                            {
+                                _jumpConsumed = false;
+                            }
+
                             if (AllowJumpingWhenSliding ? Motor.GroundingStatus.FoundAnyGround : Motor.GroundingStatus.IsStableOnGround)
                             {
-                                // If we're on a ground surface, reset jumping values
-                                if (!_jumpedThisFrame)
-                                {
-                                    _jumpConsumed = false;
-                                }
                                 _timeSinceLastAbleToJump = 0f;
+                                _wallJumpTimer = 0f;
+                                _wallSlideTimer = 0f;
                             }
                             else
                             {

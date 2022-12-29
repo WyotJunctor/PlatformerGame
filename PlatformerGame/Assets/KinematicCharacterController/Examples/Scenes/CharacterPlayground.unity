@@ -4155,7 +4155,9 @@ MonoBehaviour:
   AllowWallJump: 1
   WallSlideDuration: 0
   WallJumpDuration: 0
+  WallJumpCooldown: 0
   WallSlideDistance: 0
+  UpwardsMovement: 0
   IgnoredColliders: []
   BonusOrientationMethod: 0
   BonusOrientationSharpness: 10
@@ -16905,7 +16907,9 @@ MonoBehaviour:
   AllowWallJump: 1
   WallSlideDuration: 0
   WallJumpDuration: 0
+  WallJumpCooldown: 0
   WallSlideDistance: 0
+  UpwardsMovement: 0
   IgnoredColliders: []
   BonusOrientationMethod: 0
   BonusOrientationSharpness: 10
@@ -30147,8 +30151,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1541448848}
   m_LocalRotation: {x: 0, y: 0.72236395, z: 0, w: 0.69151306}
-  m_LocalPosition: {x: 2, y: 2, z: -10.8}
-  m_LocalScale: {x: 25.920004, y: 4, z: 1.0000012}
+  m_LocalPosition: {x: 2, y: 8.7907, z: -10.8}
+  m_LocalScale: {x: 25.920004, y: 17.5812, z: 1.0000012}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1572852572}
@@ -38227,14 +38231,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1914176356}
-  m_LocalRotation: {x: 0, y: 0.691513, z: 0, w: 0.72236407}
-  m_LocalPosition: {x: 0, y: 2, z: -10.8}
-  m_LocalScale: {x: 25.920004, y: 4, z: 1.0000012}
+  m_LocalRotation: {x: -0, y: 0.7184436, z: -0, w: 0.69558537}
+  m_LocalPosition: {x: -2.5, y: 8.6362, z: -10.9}
+  m_LocalScale: {x: 25.920004, y: 17.2724, z: 1.0000012}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1572852572}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 87.5, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 91.852, z: 0}
 --- !u!23 &1914176358
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -42796,7 +42800,9 @@ MonoBehaviour:
   AllowWallJump: 1
   WallSlideDuration: 0
   WallJumpDuration: 0
+  WallJumpCooldown: 0
   WallSlideDistance: 0
+  UpwardsMovement: 0
   IgnoredColliders: []
   BonusOrientationMethod: 0
   BonusOrientationSharpness: 10
@@ -43706,8 +43712,10 @@ MonoBehaviour:
   JumpPostGroundingGraceTime: 0.2
   AllowWallJump: 1
   WallSlideDuration: 0.5
-  WallJumpDuration: 0.5
+  WallJumpDuration: 1
+  WallJumpCooldown: 0.25
   WallSlideDistance: 0.6
+  UpwardsMovement: 1
   IgnoredColliders:
   - {fileID: 1569120874}
   - {fileID: 2059747218}
