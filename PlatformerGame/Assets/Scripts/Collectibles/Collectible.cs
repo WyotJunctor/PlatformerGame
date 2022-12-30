@@ -30,6 +30,7 @@ public class Collectible : MonoBehaviour
         if (collected)
             return;
         collected = true;
+        FX_Spawner.instance.SpawnFX(FXType.Banana_Collect, transform.position, Quaternion.identity);
         StartCoroutine(CoCollect());
     }
 
