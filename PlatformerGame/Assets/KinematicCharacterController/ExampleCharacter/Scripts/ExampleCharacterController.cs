@@ -67,6 +67,8 @@ namespace KinematicCharacterController.Examples
         [Header("Wall Jumping")]
         public bool AllowWallJump = false;
         public float WallSlideDuration = 0f;
+        [HideInInspector]
+        public bool WallSliding { get => _wallSliding; }
         private bool _wallSliding = false;
         public bool WallSlideFade = false;
         private float _wallSlideTimer = 0f;
