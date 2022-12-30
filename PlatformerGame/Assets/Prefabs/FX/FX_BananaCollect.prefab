@@ -45,9 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8d393fc068d2c64ca907c6c37022dc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pitch_range: 0.05
+  pitch_range: 0.01
   amp_range: 0.02
-  vol: -1
+  vol: 0.2
   live_forever: 0
   lifetime: 0
   fx_type: 0
