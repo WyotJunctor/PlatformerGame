@@ -62,6 +62,7 @@ namespace KinematicCharacterController.Examples
         public float JumpScalableForwardSpeed = 10f;
         public float JumpPreGroundingGraceTime = 0f;
         public float JumpPostGroundingGraceTime = 0f;
+        private float _timeSinceLastGroundJump;
 
         [Header("Wall Jumping")]
         public bool AllowWallJump = false;
@@ -79,8 +80,9 @@ namespace KinematicCharacterController.Examples
         private float _wallSlideUnstickTimer = 0f;
         private bool _initUnstick = false;
         public float WallSlideMovementThreshold = 0f;
-        public float WallSlideCheckRadius = 1f;
-        public float WallSlideDrag_mod;
+        public float WallSlideCheckRadius = 0f;
+        public float WallSlideDrag_mod = 0f;
+        public float WallSlideJumpCooldownTimer = 0f;
         public Transform BottomWallSlidePivot;
         public Transform TopWallSlidePivot;
 
@@ -202,7 +204,8 @@ namespace KinematicCharacterController.Examples
                             castDir = transform.forward;
                         }
                         RaycastHit wallHit = new RaycastHit();
-                        if (_wallJumpTimer <= WallJumpCooldown && (_wallJumpTimer > 0f || originalMoveInputVector.sqrMagnitude > 0f || motorVelocity.sqrMagnitude > 0f) &&
+                        if (_timeSinceLastGroundJump > WallSlideJumpCooldownTimer &&
+                            _wallJumpTimer <= WallJumpCooldown && (_wallJumpTimer > 0f || originalMoveInputVector.sqrMagnitude > 0f || motorVelocity.sqrMagnitude > 0f) &&
                             !(AllowJumpingWhenSliding ? Motor.GroundingStatus.FoundAnyGround : Motor.GroundingStatus.IsStableOnGround) &&
                             Physics.CapsuleCast(BottomWallSlidePivot.position, TopWallSlidePivot.position, Motor.Capsule.radius * WallSlideCheckRadius, castDir, out wallHit, WallSlideDistance, Motor.CollidableLayers, QueryTriggerInteraction.Collide))
                         {
@@ -446,6 +449,7 @@ namespace KinematicCharacterController.Examples
                                 // Handle wall jump
                                 if (_timeSinceLastAbleToJump <= JumpPostGroundingGraceTime && AllowJumpingWhenSliding ? Motor.GroundingStatus.FoundAnyGround : Motor.GroundingStatus.IsStableOnGround)
                                 {
+                                    _timeSinceLastGroundJump = 0f;
                                     // Calculate jump direction before ungrounding
                                     if (Motor.GroundingStatus.FoundAnyGround && !Motor.GroundingStatus.IsStableOnGround)
                                     {
@@ -511,6 +515,8 @@ namespace KinematicCharacterController.Examples
                     {
                         // Handle jump-related values
                         {
+                            _timeSinceLastGroundJump += Time.deltaTime;
+
                             // Handle jumping pre-ground grace period
                             if (_jumpRequested && _timeSinceJumpRequested > JumpPreGroundingGraceTime)
                             {
