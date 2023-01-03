@@ -86,7 +86,7 @@ MonoBehaviour:
     m_HSlider: 0
     m_VSlider: 0
     m_IgnoreScrollWheelUntilClicked: 0
-    m_EnableMouseInput: 1
+    m_EnableMouseInput: 0
     m_EnableSliderZoomHorizontal: 0
     m_EnableSliderZoomVertical: 0
     m_UniformScale: 1
@@ -166,7 +166,7 @@ MonoBehaviour:
   m_MinSize: {x: 200, y: 100}
   m_MaxSize: {x: 16192, y: 8096}
   vertical: 0
-  controlID: 20276
+  controlID: 258
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -224,9 +224,9 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: d40cfeff
-      m_LastClickedID: -127788
-      m_ExpandedIDs: 04a7faff72affaff12cdfaffd4cffaff32d5fafff2d5faff32defaff0853fbffdc0cfefff855feff6a66feff36fbffffd06200002c690000b06b0000bc6b0000f0290500802c0500602d0500b2110800
+      m_SelectedIDs: 82700000
+      m_LastClickedID: 0
+      m_ExpandedIDs: decdffff24d0ffff02fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -536,9 +536,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 517.0466, y: 189.91466, z: 6.9053197}
+    m_Target: {x: 309.32092, y: 91.966805, z: -2.3458052}
     speed: 2
-    m_Value: {x: 517.0466, y: 189.91466, z: 6.9053197}
+    m_Value: {x: 309.32092, y: 91.966805, z: -2.3458052}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -589,9 +589,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: 0, y: 0, z: 0, w: 1}
   m_Size:
-    m_Target: 290.30356
+    m_Target: 184.68985
     speed: 2
-    m_Value: 290.30356
+    m_Value: 184.68985
   m_Ortho:
     m_Target: 1
     speed: 2
@@ -845,22 +845,22 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets
+    - Assets/KinematicCharacterController/Examples/Scenes
     m_Globs: []
     m_OriginalText: 
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets
+  - Assets/KinematicCharacterController/Examples/Scenes
   m_LastFoldersGridSize: 16
   m_LastProjectPath: C:\Users\Wyatt Joyner\Projects\UnityProjects\PlatformerGame\PlatformerGame\PlatformerGame
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 2c660000
-    m_LastClickedID: 26156
-    m_ExpandedIDs: 000000006e66000072660000e0da000050db000098630100c06301000865010000ca9a3b
+    scrollPos: {x: 0, y: 118.5}
+    m_SelectedIDs: 366f0000
+    m_LastClickedID: 28470
+    m_ExpandedIDs: 00000000ae6e0000b06e0000b26e0000b46e0000b66e0000b86e0000ba6e00001c6f000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -888,7 +888,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000006e66000072660000e0da000050db000098630100c06301000865010000ca9a3b
+    m_ExpandedIDs: 00000000ae6e0000b06e0000b26e0000b46e0000b66e0000b86e0000ba6e000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -913,9 +913,9 @@ MonoBehaviour:
       m_Icon: {fileID: 0}
       m_ResourceFile: 
   m_ListAreaState:
-    m_SelectedInstanceIDs: d40cfeff
-    m_LastClickedInstanceID: -127788
-    m_HadKeyboardFocusLastEvent: 0
+    m_SelectedInstanceIDs: 82700000
+    m_LastClickedInstanceID: 28802
+    m_HadKeyboardFocusLastEvent: 1
     m_ExpandedInstanceIDs: c6230000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -1002,7 +1002,7 @@ MonoBehaviour:
     m_SaveData: []
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: -127788
+  m_LastSelectedObjectID: -127780
 --- !u!114 &17
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -1022,8 +1022,8 @@ MonoBehaviour:
     y: 0
     width: 339
     height: 580
-  m_MinSize: {x: 276, y: 71}
-  m_MaxSize: {x: 4001, y: 4021}
+  m_MinSize: {x: 275, y: 50}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 18}
   m_Panes:
   - {fileID: 18}
