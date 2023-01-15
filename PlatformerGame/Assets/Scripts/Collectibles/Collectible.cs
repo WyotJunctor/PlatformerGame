@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using KinematicCharacterController.Examples;
 
+public enum CollectibleType { Banana, Apple };
+
 public class Collectible : MonoBehaviour
 {
     public CollectibleType CollectibleType;
