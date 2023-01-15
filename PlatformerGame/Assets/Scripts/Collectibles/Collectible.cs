@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using KinematicCharacterController.Examples;
 
 public class Collectible : MonoBehaviour
 {
@@ -23,6 +24,16 @@ public class Collectible : MonoBehaviour
     void Update()
     {
         transform.Rotate(transform.up * RotationSpeed * Time.deltaTime);
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if (collected == true)
+            return;
+        var controller = other.gameObject.GetComponent<ExampleCharacterController>();
+        if (controller == null)
+            return;
+        Collect();
     }
 
     public void Collect()

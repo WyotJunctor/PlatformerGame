@@ -87,6 +87,7 @@ namespace KinematicCharacterController.Examples
         public float WallSlideJumpCooldownTimer = 0f;
         public Transform BottomWallSlidePivot;
         public Transform TopWallSlidePivot;
+        int _wallSlideMask;
 
         [Header("Misc")]
         public List<Collider> IgnoredColliders = new List<Collider>();
@@ -122,6 +123,11 @@ namespace KinematicCharacterController.Examples
 
             // Assign the characterController to the motor
             Motor.CharacterController = this;
+        }
+
+        private void Start()
+        {
+            _wallSlideMask = ~(Motor.CollidableLayers & LayerMask.GetMask("Collectible", "Treasure", "TreasureChecker"));
         }
 
         /// <summary>
@@ -207,9 +213,10 @@ namespace KinematicCharacterController.Examples
                         }
                         RaycastHit wallHit = new RaycastHit();
                         if (_timeSinceLastGroundJump > WallSlideJumpCooldownTimer &&
-                            _wallJumpTimer <= WallJumpCooldown && (_wallJumpTimer > 0f || originalMoveInputVector.sqrMagnitude > 0f || motorVelocity.sqrMagnitude > 0f) &&
-                            !(AllowJumpingWhenSliding ? Motor.GroundingStatus.FoundAnyGround : Motor.GroundingStatus.IsStableOnGround) &&
-                            Physics.CapsuleCast(BottomWallSlidePivot.position, TopWallSlidePivot.position, Motor.Capsule.radius * WallSlideCheckRadius, castDir, out wallHit, WallSlideDistance, Motor.CollidableLayers, QueryTriggerInteraction.Collide))
+                                _wallJumpTimer <= WallJumpCooldown && (_wallJumpTimer > 0f || originalMoveInputVector.sqrMagnitude > 0f || motorVelocity.sqrMagnitude > 0f) &&
+                                !(AllowJumpingWhenSliding ? Motor.GroundingStatus.FoundAnyGround : Motor.GroundingStatus.IsStableOnGround) &&
+                            Physics.CapsuleCast(BottomWallSlidePivot.position, TopWallSlidePivot.position, Motor.Capsule.radius * WallSlideCheckRadius, 
+                                castDir, out wallHit, WallSlideDistance, _wallSlideMask, QueryTriggerInteraction.Ignore))
                         {
                         if (!_wallSliding)
                         {

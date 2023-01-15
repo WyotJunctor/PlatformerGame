@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7153717312936255381}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: CollectibleModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -30,53 +30,8 @@ Transform:
   m_Children:
   - {fileID: 2340276039415892463}
   m_Father: {fileID: 5582327544682258094}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &5582327543993361292
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5582327543993361291}
-  - component: {fileID: 5582327543993361290}
-  m_Layer: 7
-  m_Name: CollectibleCollider
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5582327543993361291
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5582327543993361292}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5582327544682258094}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &5582327543993361290
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5582327543993361292}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5582327544682258082
 GameObject:
   m_ObjectHideFlags: 0
@@ -88,7 +43,7 @@ GameObject:
   - component: {fileID: 5582327544682258094}
   - component: {fileID: 5582327544682258093}
   - component: {fileID: 7327994128699255482}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Objective
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -107,7 +62,6 @@ Transform:
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5582327543993361291}
   - {fileID: 7153717312936255381}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -240,6 +194,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 74bb55cf836b90746a21c27ef1f40af9, type: 3}
       propertyPath: m_Name
       value: battery
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 74bb55cf836b90746a21c27ef1f40af9, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 74bb55cf836b90746a21c27ef1f40af9, type: 3}
