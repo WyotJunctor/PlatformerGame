@@ -7,20 +7,23 @@ using UnityEngine.Audio;
 
 public class FX_Object : MonoBehaviour
 {
+    public FXEvent Destroy_Event;
+
     //public GameEvent OnDead;
     public float pitch_range = 0.2f, amp_range = 0.02f;
     public float vol = -1f;
     public bool live_forever;
-    public float lifetime = 0;
+    public float lifetime = 0, MaxLifetime;
 
-    protected bool init;
+    bool destroyed;
 
-    [HideInInspector]
-    public FXType fx_type = FXType.Default;
+    protected bool init, parent;
+
+    public FXType fx_type = FXType.Default, track_fx_type = FXType.Default;
 
     public AudioMixerGroup mixerGroup;
     // Start is called before the first frame update
-    protected void Start()
+    protected void Awake()
     {
 
         LookAtConstraint lac = GetComponent<LookAtConstraint>();
@@ -53,14 +56,50 @@ public class FX_Object : MonoBehaviour
         if (live_forever) { lifetime = float.MaxValue; }
         else
         {
-            lifetime = Mathf.Max(lifetime, max_audio_len);
-            lifetime = Mathf.Max(lifetime, max_part_len);
-            Destroy(gameObject, lifetime);
+            MaxLifetime = Mathf.Max(max_audio_len, max_part_len);
+            lifetime = MaxLifetime;
+            //Destroy(gameObject, lifetime);
         }
     }
 
-    public void OnDestroy()
+    public virtual void Play()
     {
-        FX_Spawner.instance.Despawn(fx_type);
+        lifetime = MaxLifetime;
+        foreach (AudioSource aud in GetComponentsInChildren<AudioSource>())
+        {
+            if (!aud.clip)
+                continue;
+            if (vol != -1)
+                aud.volume = vol;
+            aud.Play();
+        }
+        foreach (ParticleSystem part in GetComponentsInChildren<ParticleSystem>())
+        {
+            part.Play();
+        }
+    }
+
+    public virtual void Replay()
+    {
+        Play();
+    }
+
+    private void Update()
+    {
+        if (!parent)
+            return;
+        if (!live_forever)
+            lifetime -= Time.deltaTime;
+        if (lifetime <= 0 && destroyed == false)
+        {
+            destroyed = true;
+            Destroy_Event?.Invoke(this);
+            Destroy(gameObject);
+        }
+    }
+
+    public void Kill()
+    {
+        this.lifetime = -1;
     }
 }

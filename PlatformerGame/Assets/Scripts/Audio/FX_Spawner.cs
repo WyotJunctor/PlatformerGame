@@ -15,20 +15,36 @@ public class FX_Spawner : MonoBehaviour
     public class FX_Tuple
     {
         public FXType key;
-        public UnityEngine.GameObject fx;
+        public FXType trackKey;
+        public UnityEngine.GameObject fx; 
+    }
+
+    [System.Serializable]
+    public class FX_Track_Tuple
+    {
+        public FXType key;
         public int limit = -1;
+        public bool ignore;
+        public bool cycle;
+        [HideInInspector]
+        public List<GameObject> fx_objects = new List<GameObject>();
+
+        public void HandleFXDestroy(FX_Object fx_obj)
+        {
+            fx_obj.Destroy_Event -= HandleFXDestroy;
+            fx_objects.Remove(fx_obj.gameObject);
+        }
     }
 
     public AudioMixerGroup mixer;
     private UnityEngine.GameObject holder;
 
     public List<FX_Tuple> Serialized_FX_Dict = new List<FX_Tuple>();
-    public Dictionary<FXType, List<FX_Tuple>> FX_Dict = new Dictionary<FXType, List<FX_Tuple>>();
-
-    public Dictionary<FXType, int> FX_Counter = new Dictionary<FXType, int>();
+    public List<FX_Track_Tuple> Seriaized_FX_Track_Dict = new List<FX_Track_Tuple>();
+    public Dictionary<FXType, FX_Tuple> FX_Dict = new Dictionary<FXType, FX_Tuple>();
+    public Dictionary<FXType, FX_Track_Tuple> FX_Tracker = new Dictionary<FXType, FX_Track_Tuple>();
 
     public FX_Tuple fx_default;
-    HashSet<FXType> counterTypes = new HashSet<FXType>();
 
     // Singleton code
     public static FX_Spawner instance;
@@ -48,16 +64,7 @@ public class FX_Spawner : MonoBehaviour
 
         foreach (var entry in Serialized_FX_Dict)
         {
-            if (!FX_Dict.ContainsKey(entry.key))
-            {
-                FX_Dict[entry.key] = new List<FX_Tuple>();
-            }
-            FX_Dict[entry.key].Add(entry);
-            if (entry.limit > 0)
-            {
-                FX_Counter[entry.key] = 0;
-                counterTypes.Add(entry.key);
-            }
+            FX_Dict[entry.key] = entry;
         }
         if (FX_Dict.ContainsKey(FXType.Default))
         {
@@ -67,33 +74,11 @@ public class FX_Spawner : MonoBehaviour
         holder.transform.parent = transform;
     }
 
-    public void ResetCounter()
-    {
-        foreach (var key in counterTypes)
-        {
-            FX_Counter[key] = 0;
-        }
-    }
-
-
     public UnityEngine.GameObject SpawnFX(GameObject fx, Vector3 position, Vector3 rotation, float vol = -1, Transform parent = null, FXType effectName = FXType.Default)
     {
         if (fx == null) return null;
 
-        if (FX_Counter.ContainsKey(effectName) && FX_Counter[effectName] >= FX_Dict[effectName][0].limit)
-        {
-            return null;
-        }
-
         UnityEngine.GameObject spawned_fx = Instantiate(fx, position, Quaternion.identity);
-        if (FX_Counter.ContainsKey(effectName))
-        {
-            foreach (var spawn_fx in spawned_fx.GetComponentsInChildren<FX_Object>())
-            {
-                spawn_fx.fx_type = effectName;
-            }
-            FX_Counter[effectName]++;
-        }
 
 
         if (spawned_fx == null) return null;
@@ -103,6 +88,11 @@ public class FX_Spawner : MonoBehaviour
         if (rotation != Vector3.zero)
             spawned_fx.transform.forward = rotation;
         FX_Object fx_obj = spawned_fx.GetComponent<FX_Object>();
+        // get tracker and hook up event
+        if (FX_Tracker.ContainsKey(fx_obj.track_fx_type))
+        {
+            fx_obj.Destroy_Event += FX_Tracker[fx_obj.track_fx_type].HandleFXDestroy;
+        }
         fx_obj.vol = vol;
         fx_obj.mixerGroup = mixer;
 
@@ -113,21 +103,29 @@ public class FX_Spawner : MonoBehaviour
     {
         if (!FX_Dict.ContainsKey(effectName))
             return SpawnFX(fx_default.fx, position, rotation, vol, parent, FXType.Default);
-        if (FX_Dict[effectName].Count > 1)
+
+        if (!FX_Tracker.ContainsKey(FX_Dict[effectName].trackKey))
+            return SpawnFX(FX_Dict[effectName].fx, position, rotation, vol, parent, effectName);
+
+
+        var track_tuple = FX_Tracker[FX_Dict[effectName].trackKey];
+        GameObject fx_obj = null;
+        if (track_tuple.limit > -1 && track_tuple.fx_objects.Count > track_tuple.limit && !track_tuple.ignore)
         {
-            var temp_holder = new GameObject("fx").transform;
-            foreach (var entry in FX_Dict[effectName])
+            if (track_tuple.cycle)
             {
-                SpawnFX(entry.fx, position, rotation, vol, parent, effectName).transform.parent = temp_holder;
+                fx_obj = track_tuple.fx_objects[0];
+                fx_obj.GetComponent<FX_Object>().Replay();
+                track_tuple.fx_objects.Remove(fx_obj);
             }
-            temp_holder.transform.parent = (parent != null ? parent : holder.transform);
-            return temp_holder.gameObject;
+            else
+            {
+                track_tuple.fx_objects[0].GetComponent<FX_Object>().Kill();
+                fx_obj = SpawnFX(FX_Dict[effectName].fx, position, rotation, vol, parent, effectName);
+            }
+            track_tuple.fx_objects.Add(fx_obj);
         }
-        else
-        {
-            return SpawnFX(FX_Dict[effectName][0].fx, position, rotation, vol, parent, effectName);
-        }
-        //return SpawnFX(FX_Dict.GetValueOrDefault(effectName, FX_Dict[FXType.Default]), position, rotation, vol, parent);
+        return fx_obj;
     }
 
     public UnityEngine.GameObject SpawnFX(FXType effectName, Vector3 position, Quaternion rotation, float vol = -1, Transform parent = null)
@@ -136,13 +134,5 @@ public class FX_Spawner : MonoBehaviour
             return SpawnFX(fx_default.fx, position, rotation.eulerAngles, vol, parent, FXType.Default);
 
         return SpawnFX(effectName, position, rotation.eulerAngles, vol: vol, parent: parent);
-    }
-
-    public void Despawn(FXType fx_type)
-    {
-        if (FX_Counter.ContainsKey(fx_type))
-        {
-            FX_Counter[fx_type]--;
-        }
     }
 }

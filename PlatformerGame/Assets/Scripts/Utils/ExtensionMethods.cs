@@ -323,6 +323,14 @@ public static class DictionaryExtension
         }
     }
 
+    public static IList<T> Swap<T>(this IList<T> list, int indexA, int indexB)
+    {
+        T tmp = list[indexA];
+        list[indexA] = list[indexB];
+        list[indexB] = tmp;
+        return list;
+    }
+
     public static T Choose<T>(this Dictionary<T, float> dictProbs, T defaultValue)
     {
         Dictionary<int, T> indexToKeys = new Dictionary<int, T>();

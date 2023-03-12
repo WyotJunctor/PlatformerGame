@@ -16,7 +16,7 @@ public class FX_SoundList : FX_Object
     public bool shuffle;
 
     // Start is called before the first frame update
-    new void Start()
+    new void Awake()
     {
         aud = GetComponent<AudioSource>();
         if (!aud || clips.Count == 0) return;
@@ -40,11 +40,14 @@ public class FX_SoundList : FX_Object
             }
             //aud.clip = clips[index % clips.Count];
         }
-        else
-        {
+
+        Play();
+    }
+
+    public override void Play()
+    {
+        if (randomize)
             index = Random.Range(0, clips.Count);
-            //aud.clip = clips[Random.Range(0, clips.Count)];
-        }
 
         if (playCount > 1)
         {
@@ -58,7 +61,7 @@ public class FX_SoundList : FX_Object
                     var child_aud = child.GetComponent<AudioSource>();
                     child_aud.volume = aud.volume;
                     child_aud.pitch = aud.pitch;
-                    lifetime = Mathf.Max(lifetime, SetClip(child_aud, index));
+                    MaxLifetime = Mathf.Max(lifetime, SetClip(child_aud, index));
                     index++;
                     count++;
                     if (count >= playCount)
@@ -68,10 +71,15 @@ public class FX_SoundList : FX_Object
         }
         else
         {
-            lifetime = Mathf.Max(lifetime, SetClip(aud, index));
+            MaxLifetime = Mathf.Max(lifetime, SetClip(aud, index));
         }
+        lifetime = MaxLifetime;
+    }
 
-        Destroy(gameObject, lifetime);
+    public override void Replay()
+    {
+        // base.Replay();
+        Play();
     }
 
     float SetClip(AudioSource src, int index)
