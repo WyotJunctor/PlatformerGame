@@ -91,6 +91,8 @@ namespace KinematicCharacterController.Examples
             characterInputs.JumpDown = Input.GetButtonDown("Jump");
             characterInputs.CrouchDown = Input.GetButtonDown("Crouch");
             characterInputs.CrouchUp = Input.GetButtonUp("Crouch");
+            characterInputs.Attack = Input.GetMouseButtonDown(0);
+
 
             // Apply inputs to character
             Character.SetInputs(ref characterInputs);

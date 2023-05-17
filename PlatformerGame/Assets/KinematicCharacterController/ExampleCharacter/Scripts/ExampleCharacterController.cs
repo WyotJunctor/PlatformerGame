@@ -26,6 +26,7 @@ namespace KinematicCharacterController.Examples
         public bool JumpDown;
         public bool CrouchDown;
         public bool CrouchUp;
+        public bool Attack;
     }
 
     public struct AICharacterInputs
@@ -113,6 +114,20 @@ namespace KinematicCharacterController.Examples
         private bool _shouldBeCrouching = false;
         private bool _isCrouching = false;
 
+        [Header("Attack")]
+        private bool _attackRequested;
+        private bool _attackConsumed;
+        private float _timeSinceAttackLastRequested;
+        private float _timeSinceLastAttack;
+        private float _attackTimer;
+        public float AttackDuration;
+        public float CanAttackTimer;
+        public float AttackRegisterTimer;
+        [HideInInspector] public bool Attacking;
+        private SphereCollider _attackCollider;
+        // if time since attack requested > register timer, reset
+        // if time since attack requested < register timer and time since last attack > attack period, attack
+
         private Vector3 lastInnerNormal = Vector3.zero;
         private Vector3 lastOuterNormal = Vector3.zero;
 
@@ -123,11 +138,9 @@ namespace KinematicCharacterController.Examples
 
             // Assign the characterController to the motor
             Motor.CharacterController = this;
-        }
-
-        private void Start()
-        {
             _wallSlideMask = ~(Motor.CollidableLayers & LayerMask.GetMask("Collectible", "Treasure", "TreasureChecker"));
+            _timeSinceLastAttack = CanAttackTimer;
+            _attackCollider = transform.FindDeepChild("AttackCollider").GetComponent<SphereCollider>();
         }
 
         /// <summary>
@@ -149,9 +162,9 @@ namespace KinematicCharacterController.Examples
             switch (state)
             {
                 case CharacterState.Default:
-                    {
-                        break;
-                    }
+                {
+                    break;
+                }
             }
         }
 
@@ -163,9 +176,9 @@ namespace KinematicCharacterController.Examples
             switch (state)
             {
                 case CharacterState.Default:
-                    {
-                        break;
-                    }
+               {
+                    break;
+               }
             }
         }
 
@@ -190,6 +203,11 @@ namespace KinematicCharacterController.Examples
             {
                 case CharacterState.Default:
                     {
+                        if (inputs.Attack && _timeSinceJumpRequested <= AttackRegisterTimer && _timeSinceLastAttack >= CanAttackTimer)
+                        {
+                            _attackRequested = true;
+                            _timeSinceAttackLastRequested = 0f;
+                        }
 
                         moveInputVector = (cameraPlanarRotation * moveInputVector).normalized;
                         // Move and look inputs
@@ -379,6 +397,28 @@ namespace KinematicCharacterController.Examples
             {
                 case CharacterState.Default:
                     {
+                        if (_attackRequested == true)
+                        {
+                            _attackRequested = false;
+                            _timeSinceLastAttack = 0f;
+                            _attackTimer = AttackDuration;
+                        }
+
+                        _timeSinceLastAttack += deltaTime;
+                        _timeSinceAttackLastRequested += deltaTime;
+
+                        if (_attackTimer >= 0)
+                        {
+                            _attackTimer -= deltaTime;
+                            _attackCollider.enabled = true;
+                            Attacking = true;
+                        }
+                        else
+                        {
+                            _attackCollider.enabled = false;
+                            Attacking = false;
+                        }
+
                         // Ground movement
                         if (Motor.GroundingStatus.IsStableOnGround)
                         {
@@ -512,6 +552,18 @@ namespace KinematicCharacterController.Examples
             }
         }
 
+        /*
+        private bool _attackRequested;
+        private bool _attackConsumed;
+        private float _timeSinceAttackLastRequested;
+        private float _timeSinceLastAttack;
+        public float AttackTimer;
+        public float AttackDuration;
+        public float AttackRegisterTimer;
+        // if time since attack requested > register timer, reset
+        // if time since attack requested < register timer and time since last attack > attack period, attack 
+         */
+
         /// <summary>
         /// (Called by KinematicCharacterMotor during its update cycle)
         /// This is called after the character has finished its movement update
@@ -524,7 +576,10 @@ namespace KinematicCharacterController.Examples
                     {
                         // Handle jump-related values
                         {
+
                             _timeSinceLastGroundJump += Time.deltaTime;
+
+
 
                             // Handle jumping pre-ground grace period
                             if (_jumpRequested && _timeSinceJumpRequested > JumpPreGroundingGraceTime)

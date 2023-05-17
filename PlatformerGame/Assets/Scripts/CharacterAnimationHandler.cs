@@ -21,6 +21,8 @@ public class CharacterAnimationHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        anim.SetBool("Attack", controller.Attacking);
+
         anim.SetBool("Wall_Slide", controller.WallSliding);
 
         float moveSpeed = Vector3.ProjectOnPlane(motor.BaseVelocity, motor.CharacterUp).magnitude / controller.MaxStableMoveSpeed;
